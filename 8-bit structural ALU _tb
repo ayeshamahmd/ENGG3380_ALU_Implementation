@@ -1,1 +1,116 @@
-
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_unsigned.all;
+USE ieee.numeric_std.ALL;
+ENTITY StructuralALU_test IS
+END StructuralALU_test;
+ARCHITECTURE structural OF StructuralALU_test IS
+-- Component Declaration for the Unit Under Test (UUT)
+COMPONENT StructuralALU
+port(
+A : in std_logic_vector(7 downto 0);
+B : in std_logic_vector(7 downto 0);
+Cin : in std_logic;
+S : in std_logic_vector(1 downto 0);
+Sout : out std_logic_vector(7 downto 0);
+Overflow: out std_logic;
+zeroFlag: out std_logic
+);
+END COMPONENT;
+--Inputs
+signal A : std_logic_vector(7 downto 0) := x"00";
+signal B : std_logic_vector(7 downto 0) := x"00";
+signal Cin : std_logic := '0';
+signal S : std_logic_vector(1 downto 0);
+--Outputs
+signal Sout : std_logic_vector(7 downto 0);
+signal Overflow : std_logic;
+signal zeroFlag : std_logic;
+BEGIN
+-- Instantiate the Unit Under Test (UUT)
+uut: StructuralALU PORT MAP (
+A => A,
+B => B,
+Cin => Cin,
+S => S,
+Sout => Sout,
+Overflow => Overflow,
+zeroFlag => zeroFlag
+);
+-- Stimulus process
+stim_proc: process
+begin
+-- Test case 0: 00 and 00 ADD
+A <= x"00"; -- 00 in hexadecimal
+B <= x"00"; -- 00 in hexadecimal
+S <= "00";
+wait for 100 ns;
+-- Test case 1: 100 and -26 ADD
+--Cin <= '0';
+A <= x"64"; -- 100 in hexadecimal
+B <= x"E6"; -- -26 in hexadecimal
+S <= "00";
+wait for 100 ns;
+-- Test case 2: -20 and 60 ADD
+S <= "00";
+--Cin <= '0';
+A <= x"EC";
+B <= x"3C";
+wait for 100 ns;
+-- Test case 3: 1 and 1 ADD
+S <= "00";
+--Cin <= '0';
+A <= x"01";
+B <= x"01";
+wait for 100 ns;
+-- Test case 4: -12 and 84 SUB
+S <= "01";
+--Cin <= '1';
+A <= x"F4";
+B <= x"54";
+wait for 100 ns;
+-- Test case 5: 55 and 70 SUB
+S <= "01";
+--Cin <= '1';
+A <= x"37";
+B <= x"46";
+wait for 100 ns;
+-- Test case 6: -1 and 14 SUB
+S <= "01";
+A <= x"FF";
+B <= x"0E";
+wait for 100 ns;
+-- Test case 7: -128 and 00 AND
+S <= "10";
+A <= x"80";
+B <= x"00";
+wait for 100 ns;
+-- Test case 8: -72 and 2 AND
+S <= "10";
+A <= x"B8";
+B <= x"02";
+wait for 100 ns;
+-- Test case 9: 7 and 2 AND
+S <= "10";
+A <= x"07";
+B <= x"D2";
+wait for 100 ns;
+-- Test case 10: 16 and 8 OR
+S <= "11";
+A <= x"10";
+B <= x"08";
+wait for 100 ns;
+-- Test case 11: 0 and 41 OR
+S <= "11";
+A <= x"00";
+B <= x"29";
+wait for 100 ns;
+-- Test case 12: -1 and 5 OR
+S <= "11";
+A <= x"FF";
+B <= x"05";
+wait for 100 ns;
+-- End simulation
+wait;
+end process stim_proc;
+END;
