@@ -1,0 +1,56 @@
+Library ieee;
+Use ieee.std_logic_1164.all;
+Use ieee.std_logic_unsigned.all;
+Use ieee.numeric_std.all;
+Entity BehavioralALU is
+Port(
+A : in std_logic_vector(7 downto 0);
+B : in std_logic_vector(7 downto 0);
+Cin : in std_logic;
+S : in std_logic_vector(1 downto 0);
+Sout : out std_logic_vector(7 downto 0);
+Overflow : out std_logic;
+zeroFlag : out std_logic
+);
+End BehavioralALU;
+Architecture Behavioral of BehavioralALU is
+Begin
+Process(A, B, Cin, S)
+Variable v_A : unsigned(7 downto 0);
+Variable v_B : unsigned(7 downto 0);
+Variable v_Sout : unsigned(7 downto 0);
+Variable v_Overflow : std_logic;
+Begin
+-- Convert inputs to unsigned
+v_A := unsigned(A);
+v_B := unsigned(B);
+Case S is
+When "00" => -- Addition
+v_Sout := v_A + v_B;
+If v_Sout < v_A then -- Check for overflow
+v_Overflow := '1';
+else
+v_Overflow := '0';
+end If;
+When "01" => -- Subtraction
+v_Sout := v_A + (not v_B) + "00000001";
+-- A + two's complement of B
+When "10" => -- AND
+v_Sout := v_A and v_B;
+When "11" => -- OR
+v_Sout := v_A or v_B;
+When others =>
+Null; -- No action for undefined select
+End Case;
+-- Assign the process variables to the outputs
+Sout <= std_logic_vector(v_Sout);
+Overflow <= v_Overflow;
+--zeroFlag <= '1' when v_Sout = "00000000" else '0';
+-- Set zeroFlag if result is zero
+if v_Sout = "00000000" then
+zeroFlag <= '1';
+else
+zeroFlag <= '0';
+end If;
+End Process;
+End Behavioral;
