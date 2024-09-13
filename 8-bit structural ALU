@@ -1,0 +1,47 @@
+Library ieee;
+Use ieee.std_logic_1164.all;
+Use ieee.std_logic_unsigned.all;
+Entity StructuralALU is
+port(
+A : in std_logic_vector(7 downto 0);
+B : in std_logic_vector(7 downto 0);
+Cin : in std_logic;
+S : in std_logic_vector(1 downto 0);
+Sout : out std_logic_vector(7 downto 0);
+Overflow: out std_logic;
+zeroFlag: out std_logic
+);
+End;
+Architecture structural of StructuralALU is
+COMPONENT ALU
+port(
+A : in std_logic;
+B : in std_logic;
+Cin : in std_logic;
+S : in std_logic_vector(1 downto 0);
+Sout : out std_logic;
+Cout : out std_logic
+);
+END COMPONENT;
+signal Carry : std_logic_vector(6 downto 0);
+signal Cin_mod : std_logic;
+begin
+Cin_mod <= '1' when S = "01" else '0'; -- Modify Cin for subtraction
+zeroFlag <= '1' when Sout = "00000000" else '0'; -- Set zeroFlag to 1 if output is all zeros
+alu00 : ALU port map(A => A(0), B => B(0), Cin => Cin_mod, S => S, Sout => Sout(0),
+Cout => Carry(0));
+alu01 : ALU port map(A => A(1), B => B(1), Cin => Carry(0), S => S, Sout => Sout(1), Cout
+=> Carry(1));
+alu02 : ALU port map(A => A(2), B => B(2), Cin => Carry(1), S => S, Sout => Sout(2), Cout
+=> Carry(2));
+alu03 : ALU port map(A => A(3), B => B(3), Cin => Carry(2), S => S, Sout => Sout(3), Cout
+=> Carry(3));
+alu04 : ALU port map(A => A(4), B => B(4), Cin => Carry(3), S => S, Sout => Sout(4), Cout
+=> Carry(4));
+alu05 : ALU port map(A => A(5), B => B(5), Cin => Carry(4), S => S, Sout => Sout(5), Cout
+=> Carry(5));
+alu06 : ALU port map(A => A(6), B => B(6), Cin => Carry(5), S => S, Sout => Sout(6), Cout
+=> Carry(6));
+alu07 : ALU port map(A => A(7), B => B(7), Cin => Carry(6), S => S, Sout => Sout(7), Cout
+=> Overflow);
+end;
