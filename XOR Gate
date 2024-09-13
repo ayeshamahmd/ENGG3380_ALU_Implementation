@@ -1,0 +1,15 @@
+Library ieee;
+Use ieee.std_logic_1164.all;
+Use ieee.std_logic_unsigned.all;
+Entity xor_gate is
+port(
+In1 : in std_logic;
+In2 : in std_logic;
+Z : out std_logic
+);
+End;
+Architecture structural of xor_gate is
+Begin
+-- and gate logic
+Z <= In1 xor In2;
+End;
